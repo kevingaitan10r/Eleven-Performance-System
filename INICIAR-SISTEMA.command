@@ -12,6 +12,16 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
+if [ ! -f ".env" ]; then
+    if [ -f ".env.example" ]; then
+        echo "⚠️ Creando archivo .env desde .env.example..."
+        cp .env.example .env
+    else
+        echo "❌ ERROR: No se encontró el archivo .env"
+        exit 1
+    fi
+fi
+
 # Limpiar bloqueos de sesiones previas si se cerró forzado
 find .sesion -name "SingletonLock" -delete 2>/dev/null
 find .sesion -name "SingletonSocket" -delete 2>/dev/null
