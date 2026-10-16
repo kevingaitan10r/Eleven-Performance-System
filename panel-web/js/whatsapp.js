@@ -2,8 +2,16 @@
    12A. VISTA: CHATS & WHATSAPP HUB (CONTROL EN VIVO ELEVEN PERFORMANCE)
    ========================================================================== */
 function getBotBaseUrl() {
-  const url = (S.config.gym && S.config.gym.botUrl) || "http://localhost:7077";
-  return url.replace(":3000", ":7077");
+  const stored = (typeof localStorage !== "undefined" && localStorage.getItem("eleven_bot_url")) || "";
+  if (stored && stored.trim()) return stored.trim().replace(/\/$/, "");
+  const configUrl = S.config && S.config.gym && S.config.gym.botUrl;
+  if (configUrl && configUrl.trim()) return configUrl.trim().replace(/\/$/, "");
+  if (typeof window !== "undefined" && window.location && window.location.origin) {
+    if (!window.location.hostname.endsWith(".vercel.app") && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+      return window.location.origin;
+    }
+  }
+  return "http://localhost:7077";
 }
 
 function fmtTimeChat(ts) {
