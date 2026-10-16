@@ -71,9 +71,21 @@ export function iniciarPanel({ estadoWhatsApp, sheetsActivo, enviarComoAsesor, r
     if (!origin) {
       permitido = true; // Solicitud directa sin encabezado Origin (mismo servidor o backend directo)
     } else {
-      const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-      const isSameHost = host && (origin === `http://${host}` || origin === `https://${host}`);
-      if (isLocal || isSameHost || allowed.includes(origin)) {
+      let isAllowedOrigin = false;
+      try {
+        const hostname = new URL(origin).hostname;
+        isAllowedOrigin =
+          hostname === 'localhost' ||
+          hostname === '127.0.0.1' ||
+          hostname.endsWith('.vercel.app') ||
+          hostname.endsWith('.trycloudflare.com') ||
+          hostname.endsWith('.ngrok-free.app') ||
+          hostname.endsWith('.ngrok-free.dev') ||
+          (host && (origin === `http://${host}` || origin === `https://${host}`)) ||
+          allowed.includes(origin);
+      } catch (_) {}
+
+      if (isAllowedOrigin) {
         permitido = true;
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -158,14 +170,14 @@ export function iniciarPanel({ estadoWhatsApp, sheetsActivo, enviarComoAsesor, r
     intentos.delete(ip);
     const token = randomBytes(32).toString('hex');
     db.prepare('INSERT INTO sesiones (token, usuario_id, expira) VALUES (?, ?, ?)').run(token, u.id, Date.now() + INACTIVIDAD_MS);
-    res.setHeader('Set-Cookie', `eleven_sesion=${token}; HttpOnly; SameSite=Lax; Path=/`);
+    res.setHeader('Set-Cookie', `eleven_sesion=${token}; HttpOnly; SameSite=None; Secure; Path=/`);
     res.json({ ok: true, usuario: { id: u.id, usuario: u.usuario, nombre: u.nombre, rol: u.rol } });
   });
 
   app.post('/api/logout', (req, res) => {
     const token = tokenDe(req);
     if (token) db.prepare('DELETE FROM sesiones WHERE token = ?').run(token);
-    res.setHeader('Set-Cookie', 'eleven_sesion=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');
+    res.setHeader('Set-Cookie', 'eleven_sesion=; HttpOnly; SameSite=None; Secure; Path=/; Max-Age=0');
     res.json({ ok: true });
   });
 

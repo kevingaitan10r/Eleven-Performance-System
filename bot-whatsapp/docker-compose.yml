@@ -10,5 +10,6 @@ services:
       - ./datos:/app/datos
       - ./conocimiento:/app/conocimiento
       - ../panel-web:/panel-web
+      - ./src:/app/src
     env_file:
       - .env
