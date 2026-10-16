@@ -83,7 +83,7 @@ export function limpiarBloqueosSesion() {
   for (const f of ['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'DevToolsActivePort', 'RunningChromeVersion']) {
     try {
       const p = join(dirSesion, f);
-      if (existsSync(p)) rmSync(p, { force: true, recursive: true });
+      rmSync(p, { force: true, recursive: true });
     } catch {}
   }
 }
