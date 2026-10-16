@@ -3876,14 +3876,21 @@ textarea.input {
   align-items: center;
   padding: 30px 24px;
   text-align: center;
-  opacity: 0;
-  transition: opacity 0.45s ease-in-out;
   box-sizing: border-box;
 }
 
-.auth-overlay .card.signin .card-hero-content.signin,
+.auth-overlay .card.signin .card-hero-content.signin {
+  display: flex;
+}
+.auth-overlay .card.signin .card-hero-content.signup {
+  display: none !important;
+}
+
+.auth-overlay .card.signup .card-hero-content.signin {
+  display: none !important;
+}
 .auth-overlay .card.signup .card-hero-content.signup {
-  opacity: 1;
+  display: flex;
 }
 
 .card-hero h2 {
@@ -3933,20 +3940,26 @@ textarea.input {
 }
 
 .card-form .forms {
-  position: absolute;
-  height: 200%;
-  left: 0;
-  right: 0;
-  top: 0;
-  transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  width: 100%;
 }
 
-.auth-overlay .card.signup .card-form .forms {
-  top: -100%;
+.auth-overlay .card.signin .card-form form.signin {
+  display: flex;
+}
+.auth-overlay .card.signin .card-form form.signup {
+  display: none !important;
+}
+
+.auth-overlay .card.signup .card-form form.signin {
+  display: none !important;
+}
+.auth-overlay .card.signup .card-form form.signup {
+  display: flex;
 }
 
 .card-form form {
-  height: 480px;
+  min-height: 480px;
   padding: 28px 32px;
   display: flex;
   flex-direction: column;
