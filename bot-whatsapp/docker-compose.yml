@@ -1,0 +1,13 @@
+services:
+  eleven-bot:
+    build: .
+    container_name: eleven-bot
+    restart: unless-stopped
+    ports:
+      - "7077:7077"
+    volumes:
+      - ./.sesion:/app/.sesion
+      - ./datos:/app/datos
+      - ./conocimiento:/app/conocimiento
+    env_file:
+      - .env

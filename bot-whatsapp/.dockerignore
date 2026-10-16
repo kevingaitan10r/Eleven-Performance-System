@@ -1,0 +1,7 @@
+node_modules
+.git
+.sesion
+.wwebjs_cache
+datos
+npm-debug.log
+.DS_Store

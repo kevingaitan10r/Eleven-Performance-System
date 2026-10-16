@@ -1,0 +1,12 @@
+node_modules/
+# Sesión de WhatsApp: permite usar el número sin vincular (no subir)
+.sesion/
+.wwebjs_cache/
+# Base de datos con chats y clientes, cotizaciones y registro
+datos/
+# Credenciales de Google (subir aparte si se configura Sheets)
+credenciales/
+# Variables de entorno secretas
+.env
+.env.local
+.env.*

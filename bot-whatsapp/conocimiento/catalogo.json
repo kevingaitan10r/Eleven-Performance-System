@@ -1,0 +1,92 @@
+[
+  {
+    "id": "plan_mensual_libre",
+    "categoria": "Membresías",
+    "nombre": "Plan Mensual Ilimitado (Fuerza & Gym)",
+    "precio_cop": 120000,
+    "precio_usd": 30,
+    "duracion_dias": 30,
+    "incluye": [
+      "Acceso ilimitado a sala de pesas, racks, mancuernas y máquinas de fuerza",
+      "Control estricto de aforo: máximo 8 cupos por hora para entrenar cómodo",
+      "Agendamiento y cancelación de turnos 24/7 vía WhatsApp",
+      "Plan de adaptación general y calentamiento guiado",
+      "Horarios de 6:00 a.m. a 10:00 p.m. de lunes a viernes y fines de semana"
+    ],
+    "ideal": "Deportistas y usuarios que buscan desarrollar masa muscular, fuerza y entrenar a su propio ritmo sin esperas por máquinas.",
+    "resumen": "Entrena fuerza y musculación con control de aforo garantizado.",
+    "corto": [
+      "Acceso ilimitado mes a mes",
+      "Máximo 8 cupos por turno",
+      "Reserva tus horarios por WhatsApp"
+    ],
+    "destacado": true
+  },
+  {
+    "id": "plan_funcional",
+    "categoria": "Membresías",
+    "nombre": "Plan Funcional & Fuerza Grupal",
+    "precio_cop": 95000,
+    "precio_usd": 24,
+    "duracion_dias": 30,
+    "incluye": [
+      "Sesiones guiadas de acondicionamiento físico, potencia y movilidad",
+      "Entrenamientos dinámicos orientados a quema calórica y resistencia cardiovascular",
+      "Grupos reducidos para corrección postural constante",
+      "Reserva flexible de turnos por WhatsApp"
+    ],
+    "ideal": "Personas que buscan dinamismo, resistencia, salud integral y tonificación con la energía de grupos reducidos.",
+    "resumen": "Clases grupales dinámicas enfocadas en resistencia y potencia.",
+    "corto": [
+      "Sesiones guiadas por preparadores físicos",
+      "Enfoque en resistencia, potencia y movilidad",
+      "Turnos programables por WhatsApp"
+    ],
+    "destacado": false
+  },
+  {
+    "id": "plan_personalizado",
+    "categoria": "Membresías",
+    "nombre": "Plan Personalizado 1 a 1 (Alto Rendimiento)",
+    "precio_cop": 280000,
+    "precio_usd": 70,
+    "duracion_dias": 30,
+    "incluye": [
+      "Preparador físico y científico del deporte exclusivo para cada sesión",
+      "Evaluación biomecánica individualizada y monitoreo de cargas",
+      "Periodización deportiva orientada a fútbol u objetivos competitivos",
+      "Prioridad de agendamiento y reserva de racks exclusivos",
+      "Seguimiento antropométrico y neuromuscular en el Hub de Rendimiento"
+    ],
+    "ideal": "Futbolistas, deportistas de élite o personas que desean resultados acelerados con supervisión técnica al 100%.",
+    "resumen": "Entrenamiento exclusivo 1 a 1 con preparador físico de alto rendimiento.",
+    "corto": [
+      "Preparador físico exclusivo",
+      "Monitoreo de cargas y control biomecánico",
+      "Valoración física y antropométrica incluida"
+    ],
+    "destacado": true
+  },
+  {
+    "id": "plan_trimestral",
+    "categoria": "Membresías",
+    "nombre": "Plan Trimestral Pro All-Access",
+    "precio_cop": 320000,
+    "precio_usd": 80,
+    "duracion_dias": 90,
+    "incluye": [
+      "90 días continuos de acceso a todas las instalaciones",
+      "Ahorro preferencial respecto al plan mensual individual",
+      "Reserva prioritaria de turnos por WhatsApp",
+      "Congelación de membresía por hasta 7 días por motivos de viaje o fuerza mayor"
+    ],
+    "ideal": "Atletas y socios comprometidos a mediano y largo plazo que buscan el mejor valor económico.",
+    "resumen": "Paga 3 meses con descuento preferencial y asegura tu disciplina.",
+    "corto": [
+      "90 días de acceso total",
+      "Tarifa preferencial con descuento",
+      "Opción de congelación temporal por viaje"
+    ],
+    "destacado": false
+  }
+]
