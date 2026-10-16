@@ -2,12 +2,17 @@
    12A. VISTA: CHATS & WHATSAPP HUB (CONTROL EN VIVO ELEVEN PERFORMANCE)
    ========================================================================== */
 function getBotBaseUrl() {
-  const stored = (typeof localStorage !== "undefined" && localStorage.getItem("eleven_bot_url")) || "";
-  if (stored && stored.trim()) return stored.trim().replace(/\/$/, "");
-  const configUrl = S.config && S.config.gym && S.config.gym.botUrl;
-  if (configUrl && configUrl.trim()) return configUrl.trim().replace(/\/$/, "");
-  if (typeof window !== "undefined" && window.location && window.location.origin) {
-    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" && !window.location.hostname.endsWith(".vercel.app")) {
+  if (typeof window !== "undefined" && window.location) {
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    let stored = (typeof localStorage !== "undefined" && localStorage.getItem("eleven_bot_url")) || "";
+    if (stored && !isLocal && (stored.includes("localhost") || stored.includes("127.0.0.1"))) {
+      try { localStorage.removeItem("eleven_bot_url"); } catch {}
+      stored = "";
+    }
+    if (stored && stored.trim()) return stored.trim().replace(/\/$/, "");
+    const configUrl = S.config && S.config.gym && S.config.gym.botUrl;
+    if (configUrl && configUrl.trim()) return configUrl.trim().replace(/\/$/, "");
+    if (!isLocal && !window.location.hostname.endsWith(".vercel.app")) {
       return window.location.origin;
     }
   }
