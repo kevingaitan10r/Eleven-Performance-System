@@ -15,29 +15,6 @@ function render() {
   const main = $("#main");
   if (!main) return;
 
-  // VERIFICACIÓN OBLIGATORIA DE LOGIN ANTES DE ENTRAR A LA PÁGINA
-  if (!isAuthenticated()) {
-    CHARTS.forEach(c => c.destroy());
-    CHARTS = [];
-    REPORT_CHARTS.forEach(c => c.destroy());
-    REPORT_CHARTS = [];
-    main.innerHTML = `
-      <div style="min-height:75vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px">
-        <span class="brand-logo" style="width:78px;height:78px;margin-bottom:18px"></span>
-        <h2 style="font-size:28px;color:var(--fg);margin:0 0 10px 0;font-family:var(--f-display)">Acceso Oficial · Eleven Performance</h2>
-        <p style="color:var(--muted);max-width:460px;margin:0 0 24px 0;font-size:14.5px;line-height:1.5">
-          Para acceder al Hub de Rendimiento, control de GPS, saltos y chats de WhatsApp, debes iniciar sesión con tus credenciales de preparador físico.
-        </p>
-        <button class="btn primary" data-act="openAuthModal" data-tab="signin" style="font-size:15px;padding:10px 24px">
-          🔑 Iniciar Sesión para Continuar
-        </button>
-      </div>
-    `;
-    buildNav();
-    openAuthModal("signin", { force: true });
-    return;
-  }
-
   CHARTS.forEach(c => c.destroy());
   CHARTS = [];
   chartQueue = [];

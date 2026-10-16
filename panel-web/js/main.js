@@ -957,10 +957,5 @@ document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   render();
 
-  // Si no está autenticado, abrir inmediatamente el login obligatorio
-  if (!isAuthenticated()) {
-    openAuthModal("signin", { force: true });
-  } else {
-    trySyncBotFromApi();
-  }
+  trySyncBotFromApi();
 });

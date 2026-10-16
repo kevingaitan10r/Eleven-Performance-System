@@ -17,6 +17,7 @@ bot-whatsapp/.sesion/
 .env.local
 .env.*.local
 bot-whatsapp/.env
+*.pem
 
 # Bases de datos locales SQLite y almacenamiento
 *.db
