@@ -10,6 +10,15 @@ const pad = n => String(n).padStart(2, "0");
 const toISO = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
 const todayISO = () => toISO(new Date());
 
+function getBotBaseUrl() {
+  if (typeof window !== "undefined" && window.location && window.location.origin) {
+    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+      return window.location.origin;
+    }
+  }
+  return "https://shell-suggestions-similar-labour.trycloudflare.com";
+}
+
 const parseD = iso => {
   if (!iso) return null;
   const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
