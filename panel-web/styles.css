@@ -3697,7 +3697,8 @@ textarea.input {
   align-content: stretch;
   width: 760px;
   max-width: 96vw;
-  height: 480px;
+  min-height: 520px;
+  height: auto;
   border-radius: 22px;
   background: #0B1322;
   border: 1px solid rgba(214, 166, 78, 0.28);
@@ -3830,8 +3831,8 @@ textarea.input {
 /* Columna 2: Banner Hero Central (.card-hero) */
 .card-hero {
   position: relative;
-  margin: -24px 0;
-  flex: 0 0 280px;
+  margin: -14px 0;
+  flex: 0 0 260px;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55);
@@ -3842,7 +3843,7 @@ textarea.input {
 
 .card-hero-bg {
   position: absolute;
-  inset: -24px 0;
+  inset: -14px 0;
   background: linear-gradient(150deg, rgba(8, 15, 29, 0.90) 0%, rgba(13, 24, 46, 0.96) 100%),
               radial-gradient(circle at 50% 20%, rgba(214, 166, 78, 0.35) 0%, transparent 65%),
               url("assets/eleven_logo.png") center / 160px no-repeat;
@@ -3869,12 +3870,13 @@ textarea.input {
 }
 
 .card-hero-content {
-  height: 528px;
+  min-height: 520px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 30px 24px;
+  padding: 24px 20px;
   text-align: center;
   box-sizing: border-box;
 }
@@ -3932,7 +3934,7 @@ textarea.input {
 /* Columna 3: Formulario Deslizante (.card-form) */
 .card-form {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   padding: 0;
   flex: 1 1 auto;
   min-width: 0;
@@ -3959,8 +3961,7 @@ textarea.input {
 }
 
 .card-form form {
-  min-height: 480px;
-  padding: 28px 32px;
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -3975,16 +3976,16 @@ textarea.input {
 }
 
 .card-form p.sub {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--muted);
-  margin: 0 0 16px 0;
+  margin: 0 0 10px 0;
 }
 
 .auth-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 12px;
+  gap: 4px;
+  margin-bottom: 8px;
   text-align: left;
 }
 
