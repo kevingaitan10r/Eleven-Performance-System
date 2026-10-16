@@ -840,9 +840,25 @@ async function importJSON(file) {
 
 function buildNav() {
   const currentPage = S.view ? S.view.page : "dashboard";
-  
-  // 1. Sidebar de escritorio en #side-nav .nav (agrupado por secciones y acordeón estilo delta.ai)
   const desktopSideNav = $("#side-nav .nav") || $(".side .nav") || $("aside.side nav");
+  const sideBottom = $("#side-nav .side-bottom") || $(".side .side-bottom") || $("aside.side .side-bottom");
+  const mobileNav = $(".topbar .nav");
+
+  if (!isAuthenticated()) {
+    if (desktopSideNav) {
+      desktopSideNav.innerHTML = `
+        <div style="padding:24px 16px;color:var(--muted);font-size:13px;text-align:center;line-height:1.6">
+          <div style="font-size:24px;margin-bottom:8px">🔒</div>
+          <b style="color:var(--fg);display:block;margin-bottom:4px">Acceso Restringido</b>
+          Inicia sesión para acceder a los módulos de entrenamiento y deportistas.
+        </div>
+      `;
+    }
+    if (sideBottom) sideBottom.innerHTML = "";
+    if (mobileNav) mobileNav.innerHTML = "";
+    return;
+  }
+
   if (desktopSideNav) {
     const navGroups = getNavGroups();
     desktopSideNav.innerHTML = navGroups.map(sec => {
@@ -889,7 +905,6 @@ function buildNav() {
   }
 
   // 2. Perfil del Entrenador y Configuración en el pie del Sidebar
-  const sideBottom = $("#side-nav .side-bottom") || $(".side .side-bottom") || $("aside.side .side-bottom");
   if (sideBottom) {
     const isSettings = currentPage === "config";
     const u = S.user || DEFAULT_TRAINERS[0];
@@ -917,7 +932,6 @@ function buildNav() {
   }
 
   // 3. Topbar móvil
-  const mobileNav = $(".topbar .nav");
   if (mobileNav) {
     const flatItems = [];
     getNavGroups().forEach(g => {

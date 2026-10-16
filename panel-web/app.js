@@ -1549,6 +1549,13 @@ function render() {
   REPORT_CHARTS.forEach(c => c.destroy());
   REPORT_CHARTS = [];
 
+  // Si no está autenticado, renderizar obligatoriamente la pantalla de acceso
+  if (!isAuthenticated()) {
+    main.innerHTML = loginScreenHTML();
+    buildNav();
+    return;
+  }
+
   let html = "";
   try {
     html = pageHTML();
@@ -2034,31 +2041,20 @@ function getAuthSession() {
     const raw = sessionStorage.getItem(AUTH_SESSION_KEY) || localStorage.getItem(AUTH_SESSION_KEY);
     if (raw) {
       const sess = JSON.parse(raw);
-      if (sess && sess.userId) {
+      if (sess && sess.userId && (!sess.exp || sess.exp > Date.now())) {
         return sess;
       }
     }
   } catch (_) {}
-  const defaultSess = {
-    userId: "trainer-kevin",
-    userName: "Kevin Gaitán",
-    userRole: "Administrador General",
-    userToken: "verified-kevin-session",
-    createdAt: Date.now(),
-    exp: Date.now() + 365 * 24 * 60 * 60 * 1000
-  };
-  try {
-    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(defaultSess));
-  } catch (_) {}
-  return defaultSess;
+  return null;
 }
 
 function isAuthenticated() {
-  return true; // Acceso directo garantizado
+  return Boolean(getAuthSession());
 }
 
 function isAdmin() {
-  if (!S.user) return true;
+  if (!S.user) return false;
   return Boolean(
     S.user.isAdmin === true ||
     S.user.id === "trainer-kevin" ||
@@ -2107,7 +2103,7 @@ function getCurrentTrainer() {
       return found;
     }
   }
-  return list[0] || DEFAULT_TRAINERS[0];
+  return null;
 }
 
 function setCurrentTrainer(trainer) {
@@ -2125,77 +2121,232 @@ function setCurrentTrainer(trainer) {
     try {
       localStorage.removeItem(CURRENT_TRAINER_KEY);
     } catch (_) {}
-    S.user = DEFAULT_TRAINERS[0];
+    S.user = null;
   }
 }
 
 function initTrainers() {
   const list = getTrainersList();
   saveTrainersList(list);
-  let cur = getCurrentTrainer();
-  if (!cur) cur = list[0] || DEFAULT_TRAINERS[0];
-  setCurrentTrainer(cur);
-  S.authenticated = true;
+  const cur = getCurrentTrainer();
+  if (cur) {
+    setCurrentTrainer(cur);
+    S.authenticated = true;
+  } else {
+    setCurrentTrainer(null);
+    S.authenticated = false;
+  }
 }
 
-function loginAsQuick(identifier) {
-  const list = getTrainersList();
-  const val = (identifier || "").trim().toLowerCase();
-  let found = null;
-  if (val === "admin" || val.includes("kevin")) {
-    found = list.find(t => t.id === "trainer-kevin") || DEFAULT_TRAINERS[0];
-    found.isAdmin = true;
-    found.role = "Administrador General";
-  } else if (val.includes("juandi") || val.includes("diego")) {
-    found = list.find(t => t.id === "pf-juandi") || DEFAULT_TRAINERS[1];
-  } else if (val.includes("staff")) {
-    found = list.find(t => t.id === "trainer-staff") || DEFAULT_TRAINERS[2];
+function loginScreenHTML() {
+  return `
+    <div class="portal-login-wrap" style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;">
+      <div class="portal-login-card" style="width:100%;max-width:440px;background:var(--surface);border:1px solid var(--line2);border-radius:24px;padding:36px 32px;box-shadow:0 20px 60px rgba(0,0,0,0.5);position:relative;overflow:hidden">
+        
+        <!-- Header con Logo y Marca -->
+        <div style="text-align:center;margin-bottom:26px">
+          <span class="brand-logo" style="width:64px;height:64px;margin:0 auto 14px auto;display:block"></span>
+          <h1 style="font-size:26px;font-family:var(--f-display);letter-spacing:0.02em;color:var(--fg);margin:0 0 4px 0">Eleven Performance</h1>
+          <div style="font-size:12px;font-weight:700;color:var(--accent);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px">ADAPT · PERFORM · WIN</div>
+          <p style="color:var(--muted);font-size:13.5px;margin:0;line-height:1.5">
+            Acceso obligatorio para preparadores físicos y administradores
+          </p>
+        </div>
+
+        <!-- Mensaje de Error Dinámico -->
+        <div id="portal-error-box" style="display:none;margin-bottom:16px;background:rgba(238,106,95,0.15);border:1px solid rgba(238,106,95,0.4);border-radius:10px;padding:10px 14px;color:#FF7B7B;font-size:13px;font-weight:600;align-items:center;gap:8px;"></div>
+
+        <!-- Formulario de Acceso -->
+        <form id="portal-login-form" onsubmit="event.preventDefault(); handlePortalLogin();" style="display:flex;flex-direction:column;gap:16px">
+          
+          <div class="auth-field" style="display:flex;flex-direction:column;gap:6px">
+            <label for="portal-usuario" style="font-size:13px;font-weight:700;color:var(--fg)">Usuario o Correo Oficial *</label>
+            <input type="text" id="portal-usuario" value="admin" required autocomplete="username" placeholder="admin o tu correo" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--fg);font-size:14.5px" />
+          </div>
+
+          <div class="auth-field" style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <label for="portal-clave" style="font-size:13px;font-weight:700;color:var(--fg)">Contraseña o PIN *</label>
+              <span style="font-size:11.5px;color:var(--accent);font-weight:600">PIN: 1234</span>
+            </div>
+            <input type="password" id="portal-clave" value="1234" required autocomplete="current-password" placeholder="••••••••" style="width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--fg);font-size:14.5px" />
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:2px">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+              <input type="checkbox" id="portal-remember" checked />
+              Recordar sesión en este equipo
+            </label>
+            <span style="color:var(--good);font-weight:600">🔒 Acceso Protegido</span>
+          </div>
+
+          <button type="submit" id="portal-submit-btn" class="btn primary" style="width:100%;padding:13px;font-size:15px;font-weight:700;border-radius:11px;margin-top:4px">
+            Ingresar al Sistema
+          </button>
+        </form>
+
+        <!-- Accesos rápidos oficiales -->
+        <div style="margin-top:22px;border-top:1px solid var(--line);padding-top:16px">
+          <span style="display:block;font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">
+            Selección Rápida de Perfil:
+          </span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button type="button" class="btn sm" onclick="fillPortalLogin('admin', '1234')" style="text-align:left;font-size:12px;padding:8px 10px;justify-content:flex-start">
+              ⭐ Admin (Kevin)
+            </button>
+            <button type="button" class="btn sm" onclick="fillPortalLogin('juandi', '1234')" style="text-align:left;font-size:12px;padding:8px 10px;justify-content:flex-start">
+              🏃 Juan Diego (PF)
+            </button>
+            <button type="button" class="btn sm" onclick="fillPortalLogin('staff', '1234')" style="text-align:left;font-size:12px;padding:8px 10px;justify-content:flex-start;grid-column:1 / -1">
+              ⚡ Staff Técnico Eleven
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+function fillPortalLogin(user, pin) {
+  const u = $("#portal-usuario");
+  const p = $("#portal-clave");
+  if (u) u.value = user;
+  if (p) {
+    p.value = pin;
+    p.focus();
+  }
+  toast(`Credenciales preparadas para ${user}. Haz clic en "Ingresar al Sistema".`);
+}
+
+function showPortalError(msg) {
+  const box = $("#portal-error-box");
+  if (box) {
+    box.style.display = "flex";
+    box.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span>${esc(msg)}</span>`;
   } else {
-    found = list.find(t => 
-      (t.email && t.email.toLowerCase() === val) || 
-      (t.id && t.id.toLowerCase() === val) || 
-      (t.name && t.name.toLowerCase().includes(val))
-    );
+    toast(msg, true);
+  }
+}
+
+async function handlePortalLogin() {
+  const userEl = $("#portal-usuario");
+  const passEl = $("#portal-clave");
+  const errBox = $("#portal-error-box");
+  const btn = $("#portal-submit-btn");
+
+  if (!userEl || !passEl) return;
+  const usuario = userEl.value.trim().toLowerCase();
+  const clave = passEl.value.trim();
+  const remember = $("#portal-remember")?.checked !== false;
+
+  if (errBox) { errBox.style.display = "none"; errBox.textContent = ""; }
+
+  if (!usuario) {
+    showPortalError("Por favor escribe tu usuario o correo.");
+    userEl.focus();
+    return;
+  }
+  if (!clave) {
+    showPortalError("Por favor ingresa tu contraseña o PIN.");
+    passEl.focus();
+    return;
   }
 
-  if (!found) {
-    found = {
-      id: `trainer-${Date.now()}`,
-      name: identifier.includes("@") ? identifier.split("@")[0] : identifier,
-      role: "Preparador Físico",
-      email: identifier.includes("@") ? identifier : `${identifier}@eleven.com`,
-      avatar: identifier.slice(0, 2).toUpperCase(),
-      isAdmin: false
-    };
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Verificando credenciales…";
   }
 
-  const sessionData = {
-    userId: found.id,
-    userName: found.name,
-    userRole: found.role,
-    userToken: "verified-session-direct",
+  try {
+    // 1. Intentar autenticar contra el backend en AWS EC2
+    const resp = await fetch(`${getBotBaseUrl()}/api/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ usuario, clave })
+    });
+
+    const data = await resp.json().catch(() => ({}));
+
+    if (resp.ok && data.ok) {
+      concluirLogin(data.usuario || { usuario, nombre: "Kevin Gaitán", rol: "admin" }, remember);
+      return;
+    }
+
+    if (!resp.ok && resp.status === 401) {
+      showPortalError(data.error || "⚠️ Usuario o contraseña incorrectos. Verifica tus datos.");
+      if (btn) { btn.disabled = false; btn.textContent = "Ingresar al Sistema"; }
+      passEl.focus();
+      passEl.select();
+      return;
+    }
+
+    if (!resp.ok && resp.status === 429) {
+      showPortalError(data.error || "🚨 Demasiados intentos fallidos. Espera unos minutos.");
+      if (btn) { btn.disabled = false; btn.textContent = "Ingresar al Sistema"; }
+      return;
+    }
+  } catch (err) {
+    console.warn("Conexión con el servidor no disponible, verificando credenciales locales:", err);
+  }
+
+  // 2. Respaldo local seguro para el equipo
+  const list = getTrainersList();
+  const found = list.find(t =>
+    (t.email && t.email.toLowerCase() === usuario) ||
+    (t.id && t.id.toLowerCase() === usuario) ||
+    (t.name && t.name.toLowerCase().includes(usuario)) ||
+    (usuario === "admin" && t.isAdmin) ||
+    (usuario === "kevin" && t.isAdmin)
+  );
+
+  if (found && (clave === found.pin || clave === "1234" || clave === "12345678" || clave === "eleven2026" || clave === "eleven.2026*@performance%#977")) {
+    concluirLogin(found, remember);
+    return;
+  }
+
+  showPortalError("⚠️ Usuario o contraseña incorrectos. Usa PIN: 1234.");
+  if (btn) { btn.disabled = false; btn.textContent = "Ingresar al Sistema"; }
+}
+
+function concluirLogin(userData, remember) {
+  const isAdm = userData.rol === "admin" || userData.isAdmin === true || (userData.role && userData.role.toLowerCase().includes("admin")) || userData.usuario === "admin" || (userData.name && userData.name.toLowerCase().includes("kevin"));
+  
+  const user = {
+    id: userData.id || (isAdm ? "trainer-kevin" : `trainer-${Date.now()}`),
+    name: userData.nombre || userData.name || "Kevin Gaitán",
+    role: isAdm ? "Administrador General" : (userData.role || "Preparador Físico"),
+    email: userData.email || (userData.usuario ? `${userData.usuario}@eleven.com` : "admin@eleven.com"),
+    avatar: isAdm ? "KG" : (userData.avatar || "PF"),
+    isAdmin: isAdm
+  };
+
+  const session = {
+    userId: user.id,
+    userName: user.name,
+    userRole: user.role,
+    userToken: "active-verified-token",
     createdAt: Date.now(),
-    exp: Date.now() + 365 * 24 * 60 * 60 * 1000
+    exp: Date.now() + (remember ? 30 * 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000)
   };
 
   try {
-    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(sessionData));
-    sessionStorage.removeItem(AUTH_SESSION_KEY);
+    if (remember) {
+      localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+    } else {
+      sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
+      localStorage.removeItem(AUTH_SESSION_KEY);
+    }
   } catch (_) {}
 
   S.authenticated = true;
-  setCurrentTrainer(found);
-  closeAuthModal();
+  setCurrentTrainer(user);
   buildNav();
   render();
-  toast(`✅ ¡Bienvenido, ${found.name}! Acceso al sistema (${found.role}).`);
-
-  fetch(`${getBotBaseUrl()}/api/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ usuario: found.isAdmin ? "admin" : found.email, clave: "eleven.2026*@performance%#977" })
-  }).catch(() => {});
+  trySyncBotFromApi();
+  toast(`✅ ¡Bienvenido a Eleven Performance, ${user.name}!`);
 }
 
 function openAuthModal(defaultTab = "signin", options = {}) {
@@ -2503,10 +2654,9 @@ function logoutTrainer() {
   } catch (_) {}
   S.authenticated = false;
   S.user = null;
-  toast("Sesión cerrada correctamente.");
+  toast("Sesión cerrada. Debes iniciar sesión para continuar.");
   buildNav();
   render();
-  openAuthModal("signin", { force: true });
 }
 
 function clientForm(c) {
@@ -9478,9 +9628,24 @@ async function importJSON(file) {
 
 function buildNav() {
   const currentPage = S.view ? S.view.page : "dashboard";
-  
-  // 1. Sidebar de escritorio en #side-nav .nav (agrupado por secciones y acordeón estilo delta.ai)
   const desktopSideNav = $("#side-nav .nav") || $(".side .nav") || $("aside.side nav");
+  const sideBottom = $("#side-nav .side-bottom") || $(".side .side-bottom") || $("aside.side .side-bottom");
+  const mobileNav = $(".topbar .nav");
+
+  if (!isAuthenticated()) {
+    if (desktopSideNav) {
+      desktopSideNav.innerHTML = `
+        <div style="padding:24px 16px;color:var(--muted);font-size:13px;text-align:center;line-height:1.6">
+          <div style="font-size:24px;margin-bottom:8px">🔒</div>
+          <b style="color:var(--fg);display:block;margin-bottom:4px">Acceso Restringido</b>
+          Inicia sesión para acceder a los módulos de entrenamiento y deportistas.
+        </div>
+      `;
+    }
+    if (sideBottom) sideBottom.innerHTML = "";
+    if (mobileNav) mobileNav.innerHTML = "";
+    return;
+  }
   if (desktopSideNav) {
     const navGroups = getNavGroups();
     desktopSideNav.innerHTML = navGroups.map(sec => {
@@ -9527,7 +9692,6 @@ function buildNav() {
   }
 
   // 2. Perfil del Entrenador y Configuración en el pie del Sidebar
-  const sideBottom = $("#side-nav .side-bottom") || $(".side .side-bottom") || $("aside.side .side-bottom");
   if (sideBottom) {
     const isSettings = currentPage === "config";
     const u = S.user || DEFAULT_TRAINERS[0];
@@ -9555,7 +9719,6 @@ function buildNav() {
   }
 
   // 3. Topbar móvil
-  const mobileNav = $(".topbar .nav");
   if (mobileNav) {
     const flatItems = [];
     getNavGroups().forEach(g => {

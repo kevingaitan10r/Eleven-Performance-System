@@ -21,6 +21,13 @@ function render() {
   REPORT_CHARTS.forEach(c => c.destroy());
   REPORT_CHARTS = [];
 
+  // Si no está autenticado, renderizar obligatoriamente la pantalla de acceso
+  if (!isAuthenticated()) {
+    main.innerHTML = loginScreenHTML();
+    buildNav();
+    return;
+  }
+
   let html = "";
   try {
     html = pageHTML();
