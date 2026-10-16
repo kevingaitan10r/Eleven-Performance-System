@@ -1,4 +1,11 @@
 {
-  "outputDirectory": "panel-web",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/panel-web/index.html" },
+    { "source": "/styles.css", "destination": "/panel-web/styles.css" },
+    { "source": "/app.js", "destination": "/panel-web/app.js" },
+    { "source": "/assets/(.*)", "destination": "/panel-web/assets/$1" },
+    { "source": "/js/(.*)", "destination": "/panel-web/js/$1" },
+    { "source": "/(.*)", "destination": "/panel-web/$1" }
+  ]
 }

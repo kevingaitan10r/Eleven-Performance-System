@@ -1,0 +1,6 @@
+# Ignorar bot de WhatsApp para que Vercel no intente compilarlo como Serverless Function
+bot-whatsapp/
+bot-whatsapp
+*.command
+*.bat
+supabase-schema.sql
