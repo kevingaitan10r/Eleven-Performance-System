@@ -9,5 +9,6 @@ services:
       - ./.sesion:/app/.sesion
       - ./datos:/app/datos
       - ./conocimiento:/app/conocimiento
+      - ../panel-web:/panel-web
     env_file:
       - .env
