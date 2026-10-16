@@ -11,7 +11,14 @@ export async function iniciarTunel(puerto) {
 
 async function alAbrir(url) {
   Object.assign(estadoTunel, { activo: true, url, error: null });
-  console.log(`🌍 Panel disponible en internet: ${url}`);
+  console.log('\n============================================================');
+  console.log('  🌍 ENLACE PÚBLICO CLOUDFLARE ACTIVO:');
+  console.log(`  👉 ${url}`);
+  console.log('============================================================\n');
+  try {
+    const { writeFileSync } = await import('node:fs');
+    writeFileSync(new URL('../tunel-url.txt', import.meta.url), url, 'utf8');
+  } catch {}
 }
 
 async function tunelCloudflare(puerto) {
