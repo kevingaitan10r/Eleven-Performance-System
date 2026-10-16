@@ -222,12 +222,6 @@ function openAuthModal(defaultTab = "signin", options = {}) {
                 <input type="password" id="auth-signin-pin" value="" required autocomplete="current-password" placeholder="••••••••" />
               </div>
 
-              <div class="auth-field" style="margin-top:2px;margin-bottom:6px">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
-                  <label for="auth-server-url" style="font-size:11.5px;color:var(--gold,#d4af37);font-weight:600">🌐 Servidor / Bot Eleven (Túnel o Local)</label>
-                  <span style="font-size:10px;color:var(--muted)">Cloudflare o Local</span>
-                </div>
-                <input type="text" id="auth-server-url" value="${esc(getBotBaseUrl())}" placeholder="https://xxxx.trycloudflare.com" style="font-size:11.5px;font-family:monospace;padding:6px 10px" />
               </div>
 
               <div class="auth-row-sub">
