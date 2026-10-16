@@ -1,6 +1,7 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "http://54.88.121.117:7077/api/$1" },
     { "source": "/", "destination": "/panel-web/index.html" },
     { "source": "/styles.css", "destination": "/panel-web/styles.css" },
     { "source": "/app.js", "destination": "/panel-web/app.js" },

@@ -7795,7 +7795,7 @@ function getBotBaseUrl() {
   const configUrl = S.config && S.config.gym && S.config.gym.botUrl;
   if (configUrl && configUrl.trim()) return configUrl.trim().replace(/\/$/, "");
   if (typeof window !== "undefined" && window.location && window.location.origin) {
-    if (!window.location.hostname.endsWith(".vercel.app") && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
       return window.location.origin;
     }
   }
